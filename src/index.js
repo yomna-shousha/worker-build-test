@@ -1,4 +1,4 @@
-// Auto-generated heavy computation worker with vCPU reporting
+// MEGA CPU-INTENSIVE WORKER - MAXIMUM STRESS
 import _ from 'lodash';
 import moment from 'moment';
 import { v4 as uuidv4 } from 'uuid';
@@ -10,246 +10,282 @@ import classNames from 'classnames';
 import validator from 'validator';
 import * as math from 'mathjs';
 import Big from 'big.js';
+import CryptoJS from 'crypto-js';
 
-// Auto-configure based on environment
-const AUTO_CONFIG = {
-  dataSize: 3000,
-  iterations: 800,
-  matrixSize: 100
+// MEGA configuration for maximum CPU stress
+const MEGA_CONFIG = {
+  dataSize: 10000,        // 10x more data
+  iterations: 5000,       // 5x more iterations  
+  matrixSize: 200,        // Larger matrices
+  cryptoRounds: 1000,     // Heavy crypto operations
+  compressionTests: 500   // Data compression stress
 };
 
-console.log(`🎯 Auto-configured for: ${AUTO_CONFIG.dataSize} records, ${AUTO_CONFIG.iterations} iterations`);
+console.log(\`🔥 MEGA CONFIG: \${MEGA_CONFIG.dataSize} records, \${MEGA_CONFIG.iterations} iterations\`);
 
-// Generate massive dataset for CPU stress
-const massiveDataSet = {
+// Generate MASSIVE dataset for extreme CPU stress
+const megaDataSet = {
   timestamp: moment().toISOString(),
-  config: AUTO_CONFIG,
-  users: _.range(AUTO_CONFIG.dataSize).map(i => ({
+  config: MEGA_CONFIG,
+  users: _.range(MEGA_CONFIG.dataSize).map(i => ({
     id: i,
     uuid: uuidv4(),
-    name: `User ${i}`,
-    email: `user${i}@example.com`,
+    name: \`MegaUser \${i}\`,
+    email: \`megauser\${i}@stresstest.com\`,
     created: moment().subtract(i, 'hours').toISOString(),
-    tags: _.times(15, () => `tag-${Math.floor(Math.random() * 1000)}`),
-    scores: _.times(50, () => Math.random() * 100),
+    tags: _.times(25, () => \`megatag-\${Math.floor(Math.random() * 10000)}\`),
+    scores: _.times(100, () => Math.random() * 1000),
     metadata: {
-      preferences: _.times(20, j => ({
-        key: `pref_${j}`,
+      preferences: _.times(50, j => ({
+        key: \`megapref_\${j}\`,
         value: uuidv4(),
-        weight: Math.random()
+        weight: Math.random(),
+        encrypted: CryptoJS.SHA256(\`preference_\${j}_\${i}\`).toString()
       })),
-      history: _.times(100, k => ({
-        action: _.sample(['view', 'click', 'purchase', 'share']),
+      history: _.times(200, k => ({
+        action: _.sample(['view', 'click', 'purchase', 'share', 'download', 'upload']),
         timestamp: moment().subtract(k, 'minutes').toISOString(),
-        value: Math.random() * 1000
+        value: Math.random() * 10000,
+        hash: CryptoJS.SHA1(\`action_\${k}_\${i}\`).toString()
+      })),
+      complexData: _.times(100, m => ({
+        matrix: _.times(20, () => _.times(20, () => Math.random())),
+        calculations: _.times(50, () => Math.sin(Math.random() * Math.PI)),
+        bigNumbers: _.times(20, () => new Big(Math.random() * 1000000).toString())
       }))
     }
   })),
   
-  products: _.range(AUTO_CONFIG.dataSize / 2).map(i => ({
+  products: _.range(MEGA_CONFIG.dataSize / 2).map(i => ({
     id: i,
     sku: uuidv4(),
-    name: `Product ${i}`,
-    description: _.times(20, () => `word${Math.floor(Math.random() * 10000)}`).join(' '),
-    price: _.round(Math.random() * 1000, 2),
-    categories: _.times(5, () => `cat-${Math.floor(Math.random() * 100)}`),
-    variants: _.times(10, j => ({
-      id: `${i}-${j}`,
+    name: \`MegaProduct \${i}\`,
+    description: _.times(50, () => \`megaword\${Math.floor(Math.random() * 100000)}\`).join(' '),
+    price: _.round(Math.random() * 10000, 2),
+    categories: _.times(10, () => \`megacat-\${Math.floor(Math.random() * 1000)}\`),
+    variants: _.times(20, j => ({
+      id: \`\${i}-\${j}\`,
       sku: uuidv4(),
-      attributes: _.times(8, k => ({
-        name: `attr_${k}`,
-        value: `value_${Math.floor(Math.random() * 100)}`
+      attributes: _.times(15, k => ({
+        name: \`megaattr_\${k}\`,
+        value: \`megavalue_\${Math.floor(Math.random() * 1000)}\`,
+        encrypted: CryptoJS.MD5(\`attr_\${k}_\${j}_\${i}\`).toString()
+      })),
+      pricing: _.times(10, p => ({
+        tier: \`tier_\${p}\`,
+        price: new Big(Math.random() * 1000).toString(),
+        calculation: Math.pow(Math.random(), 3) * 1000
       }))
+    })),
+    reviews: _.times(50, r => ({
+      id: uuidv4(),
+      rating: Math.floor(Math.random() * 5) + 1,
+      comment: _.times(100, () => \`megareview\${Math.floor(Math.random() * 10000)}\`).join(' '),
+      date: moment().subtract(r, 'days').toISOString(),
+      sentiment: _.times(20, () => Math.random()).reduce((a, b) => a + b, 0),
+      hash: CryptoJS.SHA256(\`review_\${r}_\${i}\`).toString()
     }))
   }))
 };
 
-// Heavy CPU-intensive processors
-const processors = {
-  lodashProcessor: (data) => {
-    console.log('🔥 Running heavy lodash operations...');
-    return _.chain(data.users)
+// MEGA CPU-INTENSIVE PROCESSORS - MAXIMUM PAIN
+const megaProcessors = {
+  megaLodashProcessor: (data) => {
+    console.log('🔥🔥 Running MEGA lodash operations...');
+    const start = performance.now();
+    
+    const result = _.chain(data.users)
       .groupBy(user => moment(user.created).format('YYYY-MM'))
-      .mapValues(group => ({
-        count: group.length,
-        avgScore: _.mean(group.flatMap(u => u.scores)),
-        topTags: _.take(_.keys(_.countBy(group.flatMap(u => u.tags))), 10),
-        processed: _.sortBy(group, 'id').map(u => _.pick(u, ['id', 'name', 'email'])),
-        complexCalc: _.times(100, () => _.shuffle(group)).length
-      }))
+      .mapValues(group => {
+        // MEGA complex processing per group
+        const megaCalc = _.times(1000, i => {
+          const shuffled = _.shuffle(group);
+          const sorted = _.sortBy(shuffled, 'id');
+          const mapped = _.map(sorted, u => ({
+            ...u,
+            megaScore: _.mean(u.scores) * Math.sin(i),
+            complexity: _.times(100, j => Math.pow(j, 2)).reduce((a, b) => a + b, 0)
+          }));
+          return mapped.length;
+        });
+        
+        return {
+          count: group.length,
+          avgScore: _.mean(group.flatMap(u => u.scores)),
+          topTags: _.take(_.keys(_.countBy(group.flatMap(u => u.tags))), 20),
+          processed: _.sortBy(group, 'id').map(u => _.pick(u, ['id', 'name', 'email'])),
+          megaComplexity: _.sum(megaCalc),
+          cryptoHashes: group.map(u => CryptoJS.SHA256(u.email).toString()),
+          matrixOps: _.times(50, () => {
+            const matrix = _.times(10, () => _.times(10, () => Math.random()));
+            return _.sum(_.flatten(matrix));
+          })
+        };
+      })
       .value();
+    
+    console.log(\`   ✅ Mega lodash completed in \${(performance.now() - start).toFixed(2)}ms\`);
+    return result;
   },
 
-  ramdaProcessor: (data) => {
-    console.log('⚡ Running heavy Ramda operations...');
-    const processUser = R.pipe(
-      R.pick(['id', 'name', 'scores', 'tags']),
-      R.assoc('avgScore', R.pipe(R.prop('scores'), R.mean)),
-      R.assoc('tagCount', R.pipe(R.prop('tags'), R.length)),
-      R.assoc('processed', true)
+  megaRamdaProcessor: (data) => {
+    console.log('⚡⚡ Running MEGA Ramda operations...');
+    const start = performance.now();
+    
+    const megaProcessUser = R.pipe(
+      R.pick(['id', 'name', 'scores', 'tags', 'metadata']),
+      R.assoc('megaAvgScore', R.pipe(R.prop('scores'), R.mean)),
+      R.assoc('megaTagCount', R.pipe(R.prop('tags'), R.length)),
+      R.assoc('megaComplexCalc', user => {
+        // MEGA complex Ramda operations
+        const calculations = R.times(i => {
+          const multiplied = R.multiply(i, Math.PI);
+          const powered = Math.pow(multiplied, 2);
+          const rooted = Math.sqrt(powered);
+          return rooted;
+        }, 500);
+        return R.sum(calculations);
+      }),
+      R.assoc('megaCrypto', user => CryptoJS.SHA512(user.name + user.id).toString()),
+      R.assoc('megaProcessed', true)
     );
     
-    return R.pipe(
+    const result = R.pipe(
       R.prop('users'),
-      R.map(processUser),
-      R.groupBy(R.pipe(R.prop('avgScore'), score => score > 50 ? 'high' : 'low')),
-      R.mapObjIndexed((group, key) => ({
-        category: key,
-        count: R.length(group),
-        avgScore: R.pipe(R.pluck('avgScore'), R.mean)(group),
-        complexity: R.times(R.identity, 1000).length
-      }))
+      R.map(megaProcessUser),
+      R.groupBy(R.pipe(R.prop('megaAvgScore'), score => {
+        if (score > 750) return 'ultra-high';
+        if (score > 500) return 'high'; 
+        if (score > 250) return 'medium';
+        return 'low';
+      })),
+      R.mapObjIndexed((group, key) => {
+        // MEGA processing per group
+        const megaStats = R.times(i => {
+          const sampled = R.take(100, group);
+          const processed = R.map(R.pipe(
+            R.prop('megaComplexCalc'),
+            R.multiply(Math.sin(i))
+          ), sampled);
+          return R.sum(processed);
+        }, 200);
+        
+        return {
+          category: key,
+          count: R.length(group),
+          avgScore: R.pipe(R.pluck('megaAvgScore'), R.mean)(group),
+          megaStatSum: R.sum(megaStats),
+          complexity: R.times(R.identity, 2000).length,
+          bigNumberOps: R.times(i => new Big(i * Math.PI).toString(), 100)
+        };
+      })
     )(data);
+    
+    console.log(\`   ✅ Mega Ramda completed in \${(performance.now() - start).toFixed(2)}ms\`);
+    return result;
   },
 
-  mathProcessor: () => {
-    console.log('🧮 Running heavy math operations...');
+  megaMathProcessor: () => {
+    console.log('🧮🧮 Running MEGA math operations...');
+    const start = performance.now();
+    
     const results = [];
-    for (let i = 0; i < AUTO_CONFIG.iterations; i++) {
-      // Create random matrices
-      const matrix1 = math.random([AUTO_CONFIG.matrixSize, AUTO_CONFIG.matrixSize]);
-      const matrix2 = math.random([AUTO_CONFIG.matrixSize, AUTO_CONFIG.matrixSize]);
+    for (let i = 0; i < MEGA_CONFIG.iterations; i++) {
+      // MEGA matrix operations
+      const matrix1 = math.random([MEGA_CONFIG.matrixSize, MEGA_CONFIG.matrixSize]);
+      const matrix2 = math.random([MEGA_CONFIG.matrixSize, MEGA_CONFIG.matrixSize]);
       
-      // Heavy matrix operations
+      // Multiple heavy operations per iteration
       const multiplied = math.multiply(matrix1, matrix2);
       const transposed = math.transpose(multiplied);
-      const determinant = math.det(transposed);
+      const added = math.add(transposed, matrix1);
+      const subtracted = math.subtract(added, matrix2);
       
-      // Big number calculations
-      const big1 = new Big(Math.random() * 1000);
-      const big2 = new Big(Math.random() * 1000);
-      const bigResult = big1.pow(3).plus(big2.sqrt());
+      // Determinant calculation (very expensive)
+      const det = math.det(subtracted);
+      
+      // MEGA big number calculations
+      const bigOps = _.times(20, j => {
+        const big1 = new Big(Math.random() * 100000);
+        const big2 = new Big(Math.random() * 100000);
+        const result = big1.pow(2).plus(big2.sqrt()).div(big1.plus(1));
+        return result.toString();
+      });
+      
+      // Crypto operations for extra CPU load
+      const cryptoOps = _.times(10, k => {
+        const data = \`matrix_\${i}_\${k}_\${det}\`;
+        return CryptoJS.SHA256(data).toString();
+      });
       
       results.push({
         iteration: i,
-        determinant: determinant,
-        bigNumber: bigResult.toString()
+        determinant: det,
+        bigNumbers: bigOps.slice(0, 3),
+        cryptoHashes: cryptoOps.slice(0, 2)
       });
-    }
-    return { calculations: results.length, sample: results.slice(0, 5) };
-  },
-
-  immutableProcessor: (data) => {
-    console.log('💎 Running heavy Immutable operations...');
-    const immutableData = Map(data);
-    const usersList = List(immutableData.get('users', []));
-    
-    return usersList
-      .groupBy(user => moment(user.created).format('YYYY'))
-      .map(group => Map({
-        count: group.size,
-        users: group.map(user => user.name).toArray(),
-        avgScore: group.reduce((sum, user) => {
-          const scores = user.scores;
-          return sum + (Array.isArray(scores) ? _.mean(scores) : 0);
-        }, 0) / group.size,
-        heavyCalc: _.times(200, () => group.size).reduce((a, b) => a + b, 0)
-      }))
-      .toJS();
-  },
-
-  validationProcessor: (data) => {
-    console.log('✅ Running heavy validation operations...');
-    return data.users.map(user => {
-      // Perform expensive validations
-      const validations = _.times(50, i => ({
-        test: `validation_${i}`,
-        result: validator.isEmail(`test${i}@example.com`),
-        uuid: validator.isUUID(uuidv4()),
-        length: validator.isLength(user.name, { min: 1, max: 100 })
-      }));
       
-      return {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        isValidEmail: validator.isEmail(user.email),
-        isValidUUID: validator.isUUID(user.uuid),
-        validationCount: validations.length,
-        classes: classNames({
-          'valid-user': validator.isEmail(user.email),
-          'premium-user': _.mean(user.scores) > 75,
-          'active-user': moment(user.created).isAfter(moment().subtract(30, 'days'))
-        })
-      };
-    });
-  }
-};
-
-export default {
-  async fetch(request, env, ctx) {
-    const url = new URL(request.url);
-    const start = performance.now();
-
-    let result;
-    let operation = 'info';
-    
-    switch (url.pathname) {
-      case '/stress':
-        operation = 'full-stress-test';
-        console.log('🚀 Running FULL CPU STRESS TEST...');
-        result = {
-          lodash: processors.lodashProcessor(massiveDataSet),
-          ramda: processors.ramdaProcessor(massiveDataSet),
-          math: processors.mathProcessor(),
-          immutable: processors.immutableProcessor(massiveDataSet),
-          validation: processors.validationProcessor(massiveDataSet).slice(0, 10)
-        };
-        break;
-      case '/lodash':
-        operation = 'lodash-stress';
-        result = processors.lodashProcessor(massiveDataSet);
-        break;
-      case '/math':
-        operation = 'math-stress';
-        result = processors.mathProcessor();
-        break;
-      case '/ramda':
-        operation = 'ramda-stress';
-        result = processors.ramdaProcessor(massiveDataSet);
-        break;
-      case '/immutable':
-        operation = 'immutable-stress';
-        result = processors.immutableProcessor(massiveDataSet);
-        break;
-      case '/validation':
-        operation = 'validation-stress';
-        result = processors.validationProcessor(massiveDataSet).slice(0, 10);
-        break;
-      default:
-        result = {
-          message: 'Cloudflare Workers vCPU Stress Test',
-          autoConfig: AUTO_CONFIG,
-          dataSize: {
-            users: massiveDataSet.users.length,
-            products: massiveDataSet.products.length
-          },
-          endpoints: ['/stress', '/lodash', '/math', '/ramda', '/immutable', '/validation'],
-          instructions: 'Use /stress for full CPU load test'
-        };
+      // CPU intensive calculation every 100 iterations
+      if (i % 100 === 0) {
+        _.times(1000, n => Math.sin(n * Math.PI / 180));
+      }
     }
+    
+    console.log(\`   ✅ Mega math completed in \${(performance.now() - start).toFixed(2)}ms\`);
+    return { calculations: results.length, sample: results.slice(0, 10) };
+  },
 
-    const processingTime = performance.now() - start;
-
-    return new Response(JSON.stringify({
-      operation,
-      processingTime: `${processingTime.toFixed(2)}ms`,
-      timestamp: moment().toISOString(),
-      result: operation === 'full-stress-test' ? 
-        { ...result, note: 'Results truncated for response size' } : 
-        result,
-      performance: {
-        fast: processingTime < 100,
-        acceptable: processingTime < 500,
-        slow: processingTime >= 500,
-        veryHeavy: processingTime >= 1000
-      }
-    }, null, 2), {
-      headers: { 
-        'Content-Type': 'application/json',
-        'X-Processing-Time': `${processingTime.toFixed(2)}ms`,
-        'X-vCPU-Test': 'stress-test-active'
-      }
+  megaCryptoProcessor: (data) => {
+    console.log('🔐🔐 Running MEGA crypto operations...');
+    const start = performance.now();
+    
+    const results = [];
+    
+    // Process each user with heavy crypto operations
+    data.users.slice(0, 1000).forEach((user, i) => {
+      // Multiple hashing algorithms
+      const sha256 = CryptoJS.SHA256(JSON.stringify(user)).toString();
+      const sha512 = CryptoJS.SHA512(\`\${user.name}\${user.email}\${user.id}\`).toString();
+      const md5 = CryptoJS.MD5(user.uuid).toString();
+      
+      // Encryption/decryption cycles
+      const encrypted = CryptoJS.AES.encrypt(JSON.stringify(user.metadata), 'secret-key').toString();
+      const decrypted = CryptoJS.AES.decrypt(encrypted, 'secret-key').toString(CryptoJS.enc.Utf8);
+      
+      // PBKDF2 key derivation (very CPU intensive)
+      const key = CryptoJS.PBKDF2(user.email, 'salt', { 
+        keySize: 256/32, 
+        iterations: 1000 + (i % 500) 
+      }).toString();
+      
+      results.push({
+        userId: user.id,
+        sha256: sha256.substring(0, 16),
+        sha512: sha512.substring(0, 16),
+        md5: md5.substring(0, 16),
+        derivedKey: key.substring(0, 16),
+        encryptionWorked: decrypted.length > 0
+      });
     });
-  }
-};
+    
+    console.log(\`   ✅ Mega crypto completed in \${(performance.now() - start).toFixed(2)}ms\`);
+    return { processed: results.length, sample: results.slice(0, 5) };
+  },
+
+  megaValidationProcessor: (data) => {
+    console.log('✅✅ Running MEGA validation operations...');
+    const start = performance.now();
+    
+    const results = data.users.slice(0, 2000).map((user, i) => {
+      // Perform hundreds of validations per user
+      const megaValidations = _.times(200, j => {
+        const testEmail = \`test\${i}\${j}@mega.com\`;
+        const testUuid = uuidv4();
+        const testUrl = \`https://mega\${j}.example.com/path\${i}\`;
+        
+        return {
+          emailValid: validator.isEmail(testEmail),
+          uuidValid: validator.isUUID(testUuid),
+          urlValid: validator.isURL(testUrl),
+          lengthValid: validator.isLength(\`test\${j}\`, { min: 1, max: 100 }),
+          numericValid: validator.isNumeric(\`\${Math.floor(Math.random() * 1000)}\
