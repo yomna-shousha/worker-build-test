@@ -1,0 +1,19 @@
+name = "build-performance-test"
+main = "dist/worker.js"
+compatibility_date = "2024-09-17"
+
+[build]
+command = "npm run build"
+watch_dir = "src"
+
+[vars]
+BUILD_TIME = "measured-during-deploy"
+PLAN_TYPE = "SET_THIS_MANUALLY"
+
+# For local development
+[env.development]
+name = "build-performance-test-dev"
+
+# For production
+[env.production] 
+name = "build-performance-test-prod"

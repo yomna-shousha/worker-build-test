@@ -1,0 +1,10 @@
+{
+  "presets": [
+    ["@babel/preset-env", {
+      "targets": {
+        "browsers": ["chrome >= 80"]
+      },
+      "modules": false
+    }]
+  ]
+}
