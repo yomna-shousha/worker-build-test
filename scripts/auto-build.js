@@ -147,7 +147,7 @@ module.exports = {
 }
 
 function runCpuBurnTest(durationMs) {
-  console.log(\`🔥 Running CPU burn test for \${durationMs}ms...\`);
+  console.log('🔥 Running CPU burn test for ' + durationMs + 'ms...');
   const start = Date.now();
   let iterations = 0;
   
@@ -169,10 +169,10 @@ function runMegaStressBuild() {
   
   console.log('🔥🔥🔥 MEGA CPU STRESS TEST - MAXIMUM LOAD 🔥🔥🔥');
   console.log('================================================');
-  console.log(\`💻 Detected CPUs: \${env.cpuCount} cores\`);
-  console.log(\`🧠 Memory: \${env.totalMemory}GB\`);
-  console.log(\`☁️  Cloudflare Environment: \${env.isCloudflare ? 'YES' : 'Local'}\`);
-  console.log(\`🏗️  Platform: \${env.platform} (\${env.arch})\`);
+  console.log('💻 Detected CPUs: ' + env.cpuCount + ' cores');
+  console.log('🧠 Memory: ' + env.totalMemory + 'GB');
+  console.log('☁️  Cloudflare Environment: ' + (env.isCloudflare ? 'YES' : 'Local'));
+  console.log('🏗️  Platform: ' + env.platform + ' (' + env.arch + ')');
   
   // MEGA settings for maximum stress
   const webpackSettings = {
@@ -181,8 +181,8 @@ function runMegaStressBuild() {
     chunks: 'mega-aggressive'
   };
   
-  console.log(\`⚙️  Webpack parallel: \${webpackSettings.parallel}\`);
-  console.log(\`🔧 Compression passes: \${webpackSettings.passes}\`);
+  console.log('⚙️  Webpack parallel: ' + webpackSettings.parallel);
+  console.log('🔧 Compression passes: ' + webpackSettings.passes);
   console.log('🎯 Target: 10-15 minute stress test');
   console.log('');
   
@@ -190,7 +190,7 @@ function runMegaStressBuild() {
   const numTests = 8; // More tests = more stress
   
   for (let i = 1; i <= numTests; i++) {
-    console.log(\`📦 MEGA BUILD \${i}/\${numTests} - Maximum CPU stress...\`);
+    console.log('📦 MEGA BUILD ' + i + '/' + numTests + ' - Maximum CPU stress...');
     
     // Clean previous build
     if (fs.existsSync('dist')) {
@@ -236,7 +236,7 @@ function runMegaStressBuild() {
       // Check all output files
       const distFiles = fs.existsSync('dist') ? fs.readdirSync('dist') : [];
       const totalBundleSize = distFiles.reduce((size, file) => {
-        return size + fs.statSync(\`dist/\${file}\`).size;
+        return size + fs.statSync('dist/' + file).size;
       }, 0);
       
       const result = {
@@ -262,12 +262,12 @@ function runMegaStressBuild() {
       
       builds.push(result);
       
-      console.log(\`   ✅ \${totalTime}ms total | Webpack: \${webpackTime}ms | CPU: \${result.cpuMetrics.utilization}% | Bundle: \${Math.round(totalBundleSize/1024)}KB (\${distFiles.length} files)\`);
+      console.log('   ✅ ' + totalTime + 'ms total | Webpack: ' + webpackTime + 'ms | CPU: ' + result.cpuMetrics.utilization + '% | Bundle: ' + Math.round(totalBundleSize/1024) + 'KB (' + distFiles.length + ' files)');
       
     } catch (error) {
       const totalTime = Date.now() - overallStart;
-      console.log(\`   ❌ Build failed after \${totalTime}ms\`);
-      console.log(\`   Error: \${error.message.substring(0, 200)}...\`);
+      console.log('   ❌ Build failed after ' + totalTime + 'ms');
+      console.log('   Error: ' + error.message.substring(0, 200) + '...');
       
       builds.push({
         build: i,
@@ -288,7 +288,7 @@ function runMegaStressBuild() {
   const successfulBuilds = builds.filter(b => b.success);
   
   if (successfulBuilds.length === 0) {
-    console.log('\\n❌ No successful builds to analyze');
+    console.log('\n❌ No successful builds to analyze');
     return;
   }
   
@@ -298,16 +298,16 @@ function runMegaStressBuild() {
   const avgBundleSize = successfulBuilds.reduce((sum, b) => sum + (b.bundleInfo?.totalSize || 0), 0) / successfulBuilds.length;
   const avgFileCount = successfulBuilds.reduce((sum, b) => sum + (b.bundleInfo?.fileCount || 0), 0) / successfulBuilds.length;
   
-  console.log('\\n🎯 === MEGA vCPU STRESS TEST RESULTS ===');
-  console.log(\`📊 Environment: \${env.cpuCount} vCPU, \${env.totalMemory}GB RAM\`);
-  console.log(\`⏱️  Average Total Time: \${Math.round(avgDuration)}ms (\${Math.round(avgDuration/1000)}s)\`);
-  console.log(\`🏗️  Average Webpack Time: \${Math.round(avgWebpackTime)}ms (\${Math.round(avgWebpackTime/1000)}s)\`);
-  console.log(\`🔥 Average CPU Utilization: \${Math.round(avgCpuUtil * 100) / 100}%\`);
-  console.log(\`📦 Average Bundle Size: \${Math.round(avgBundleSize / 1024)}KB\`);
-  console.log(\`📄 Average File Count: \${Math.round(avgFileCount)} files\`);
-  console.log(\`⚙️  Webpack Parallel: \${webpackSettings.parallel} processes\`);
-  console.log(\`🗜️  Compression Passes: \${webpackSettings.passes}\`);
-  console.log(\`✅ Successful Builds: \${successfulBuilds.length}/\${numTests}\`);
+  console.log('\n🎯 === MEGA vCPU STRESS TEST RESULTS ===');
+  console.log('📊 Environment: ' + env.cpuCount + ' vCPU, ' + env.totalMemory + 'GB RAM');
+  console.log('⏱️  Average Total Time: ' + Math.round(avgDuration) + 'ms (' + Math.round(avgDuration/1000) + 's)');
+  console.log('🏗️  Average Webpack Time: ' + Math.round(avgWebpackTime) + 'ms (' + Math.round(avgWebpackTime/1000) + 's)');
+  console.log('🔥 Average CPU Utilization: ' + (Math.round(avgCpuUtil * 100) / 100) + '%');
+  console.log('📦 Average Bundle Size: ' + Math.round(avgBundleSize / 1024) + 'KB');
+  console.log('📄 Average File Count: ' + Math.round(avgFileCount) + ' files');
+  console.log('⚙️  Webpack Parallel: ' + webpackSettings.parallel + ' processes');
+  console.log('🗜️  Compression Passes: ' + webpackSettings.passes);
+  console.log('✅ Successful Builds: ' + successfulBuilds.length + '/' + numTests);
   
   // Performance classification with more detail
   let performanceClass;
@@ -323,16 +323,16 @@ function runMegaStressBuild() {
     performanceClass = '🤔 UNKNOWN CONFIGURATION';
   }
   
-  console.log(\`🏆 Performance Class: \${performanceClass}\`);
+  console.log('🏆 Performance Class: ' + performanceClass);
   
   // Calculate efficiency metrics
   const timePerCore = avgDuration / env.cpuCount;
   const bundlePerSecond = (avgBundleSize / 1024) / (avgDuration / 1000);
   
-  console.log(\`\\n📈 EFFICIENCY METRICS:\`);
-  console.log(\`⚡ Time per CPU core: \${Math.round(timePerCore)}ms\`);
-  console.log(\`📊 Bundle KB per second: \${Math.round(bundlePerSecond * 100) / 100}\`);
-  console.log(\`🎯 CPU cores utilized effectively: \${avgCpuUtil > 50 ? 'YES' : 'PARTIAL'}\`);
+  console.log('\n📈 EFFICIENCY METRICS:');
+  console.log('⚡ Time per CPU core: ' + Math.round(timePerCore) + 'ms');
+  console.log('📊 Bundle KB per second: ' + (Math.round(bundlePerSecond * 100) / 100));
+  console.log('🎯 CPU cores utilized effectively: ' + (avgCpuUtil > 50 ? 'YES' : 'PARTIAL'));
   
   // Save mega detailed results
   const report = {
@@ -356,7 +356,7 @@ function runMegaStressBuild() {
   };
   
   fs.writeFileSync('mega-vcpu-stress-report.json', JSON.stringify(report, null, 2));
-  console.log('\\n💾 MEGA detailed report saved to mega-vcpu-stress-report.json');
+  console.log('\n💾 MEGA detailed report saved to mega-vcpu-stress-report.json');
   
   // Cleanup
   if (fs.existsSync('webpack.mega.js')) {
