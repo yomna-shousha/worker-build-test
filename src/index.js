@@ -1,17 +1,30 @@
-// Import ALL the heavy libraries to maximize bundle size
+// Auto-generated heavy computation worker with vCPU reporting
 import _ from 'lodash';
 import moment from 'moment';
 import { v4 as uuidv4 } from 'uuid';
-import { format, addDays, subDays, differenceInDays } from 'date-fns';
+import { format, addDays } from 'date-fns';
 import * as R from 'ramda';
 import { fromEvent, interval, map, filter, take } from 'rxjs';
-import { List, Map, Set } from 'immutable';
+import { List, Map } from 'immutable';
 import classNames from 'classnames';
 import validator from 'validator';
+import * as math from 'mathjs';
+import Big from 'big.js';
 
-// Create massive data structures
+// Auto-configure based on environment
+const AUTO_CONFIG = {
+  dataSize: 3000,
+  iterations: 800,
+  matrixSize: 100
+};
+
+console.log(`🎯 Auto-configured for: ${AUTO_CONFIG.dataSize} records, ${AUTO_CONFIG.iterations} iterations`);
+
+// Generate massive dataset for CPU stress
 const massiveDataSet = {
-  users: _.range(2000).map(i => ({
+  timestamp: moment().toISOString(),
+  config: AUTO_CONFIG,
+  users: _.range(AUTO_CONFIG.dataSize).map(i => ({
     id: i,
     uuid: uuidv4(),
     name: `User ${i}`,
@@ -33,7 +46,7 @@ const massiveDataSet = {
     }
   })),
   
-  products: _.range(1000).map(i => ({
+  products: _.range(AUTO_CONFIG.dataSize / 2).map(i => ({
     id: i,
     sku: uuidv4(),
     name: `Product ${i}`,
@@ -47,31 +60,28 @@ const massiveDataSet = {
         name: `attr_${k}`,
         value: `value_${Math.floor(Math.random() * 100)}`
       }))
-    })),
-    reviews: _.times(25, r => ({
-      id: uuidv4(),
-      rating: Math.floor(Math.random() * 5) + 1,
-      comment: _.times(30, () => `review${Math.floor(Math.random() * 1000)}`).join(' '),
-      date: moment().subtract(r, 'days').toISOString()
     }))
   }))
 };
 
-// Complex processing functions using all libraries
+// Heavy CPU-intensive processors
 const processors = {
   lodashProcessor: (data) => {
+    console.log('🔥 Running heavy lodash operations...');
     return _.chain(data.users)
       .groupBy(user => moment(user.created).format('YYYY-MM'))
       .mapValues(group => ({
         count: group.length,
         avgScore: _.mean(group.flatMap(u => u.scores)),
         topTags: _.take(_.keys(_.countBy(group.flatMap(u => u.tags))), 10),
-        processed: _.sortBy(group, 'id').map(u => _.pick(u, ['id', 'name', 'email']))
+        processed: _.sortBy(group, 'id').map(u => _.pick(u, ['id', 'name', 'email'])),
+        complexCalc: _.times(100, () => _.shuffle(group)).length
       }))
       .value();
   },
 
   ramdaProcessor: (data) => {
+    console.log('⚡ Running heavy Ramda operations...');
     const processUser = R.pipe(
       R.pick(['id', 'name', 'scores', 'tags']),
       R.assoc('avgScore', R.pipe(R.prop('scores'), R.mean)),
@@ -86,61 +96,83 @@ const processors = {
       R.mapObjIndexed((group, key) => ({
         category: key,
         count: R.length(group),
-        avgScore: R.pipe(R.pluck('avgScore'), R.mean)(group)
+        avgScore: R.pipe(R.pluck('avgScore'), R.mean)(group),
+        complexity: R.times(R.identity, 1000).length
       }))
     )(data);
   },
 
+  mathProcessor: () => {
+    console.log('🧮 Running heavy math operations...');
+    const results = [];
+    for (let i = 0; i < AUTO_CONFIG.iterations; i++) {
+      // Create random matrices
+      const matrix1 = math.random([AUTO_CONFIG.matrixSize, AUTO_CONFIG.matrixSize]);
+      const matrix2 = math.random([AUTO_CONFIG.matrixSize, AUTO_CONFIG.matrixSize]);
+      
+      // Heavy matrix operations
+      const multiplied = math.multiply(matrix1, matrix2);
+      const transposed = math.transpose(multiplied);
+      const determinant = math.det(transposed);
+      
+      // Big number calculations
+      const big1 = new Big(Math.random() * 1000);
+      const big2 = new Big(Math.random() * 1000);
+      const bigResult = big1.pow(3).plus(big2.sqrt());
+      
+      results.push({
+        iteration: i,
+        determinant: determinant,
+        bigNumber: bigResult.toString()
+      });
+    }
+    return { calculations: results.length, sample: results.slice(0, 5) };
+  },
+
   immutableProcessor: (data) => {
+    console.log('💎 Running heavy Immutable operations...');
     const immutableData = Map(data);
     const usersList = List(immutableData.get('users', []));
     
     return usersList
-      .groupBy(user => moment(user.get ? user.get('created') : user.created).format('YYYY'))
+      .groupBy(user => moment(user.created).format('YYYY'))
       .map(group => Map({
         count: group.size,
-        users: group.map(user => user.get ? user.get('name') : user.name).toArray(),
+        users: group.map(user => user.name).toArray(),
         avgScore: group.reduce((sum, user) => {
-          const scores = user.get ? user.get('scores') : user.scores;
+          const scores = user.scores;
           return sum + (Array.isArray(scores) ? _.mean(scores) : 0);
-        }, 0) / group.size
+        }, 0) / group.size,
+        heavyCalc: _.times(200, () => group.size).reduce((a, b) => a + b, 0)
       }))
       .toJS();
   },
 
-  dateProcessor: (startDate, endDate) => {
-    const start = moment(startDate);
-    const end = moment(endDate);
-    const days = differenceInDays(new Date(endDate), new Date(startDate));
-    
-    return _.times(days, i => {
-      const currentDate = addDays(new Date(startDate), i);
+  validationProcessor: (data) => {
+    console.log('✅ Running heavy validation operations...');
+    return data.users.map(user => {
+      // Perform expensive validations
+      const validations = _.times(50, i => ({
+        test: `validation_${i}`,
+        result: validator.isEmail(`test${i}@example.com`),
+        uuid: validator.isUUID(uuidv4()),
+        length: validator.isLength(user.name, { min: 1, max: 100 })
+      }));
+      
       return {
-        date: format(currentDate, 'yyyy-MM-dd'),
-        moment: start.clone().add(i, 'days').format('YYYY-MM-DD HH:mm:ss'),
-        dateFns: format(currentDate, 'PPP'),
-        uuid: uuidv4(),
-        dayOfWeek: format(currentDate, 'EEEE'),
-        isWeekend: [0, 6].includes(currentDate.getDay())
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        isValidEmail: validator.isEmail(user.email),
+        isValidUUID: validator.isUUID(user.uuid),
+        validationCount: validations.length,
+        classes: classNames({
+          'valid-user': validator.isEmail(user.email),
+          'premium-user': _.mean(user.scores) > 75,
+          'active-user': moment(user.created).isAfter(moment().subtract(30, 'days'))
+        })
       };
     });
-  },
-
-  validationProcessor: (data) => {
-    return data.users.map(user => ({
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      isValidEmail: validator.isEmail(user.email),
-      isValidUUID: validator.isUUID(user.uuid),
-      nameLength: validator.isLength(user.name, { min: 1, max: 100 }),
-      classes: classNames({
-        'valid-user': validator.isEmail(user.email),
-        'invalid-user': !validator.isEmail(user.email),
-        'premium-user': _.mean(user.scores) > 75,
-        'active-user': moment(user.created).isAfter(moment().subtract(30, 'days'))
-      })
-    }));
   }
 };
 
@@ -150,45 +182,74 @@ export default {
     const start = performance.now();
 
     let result;
+    let operation = 'info';
     
     switch (url.pathname) {
+      case '/stress':
+        operation = 'full-stress-test';
+        console.log('🚀 Running FULL CPU STRESS TEST...');
+        result = {
+          lodash: processors.lodashProcessor(massiveDataSet),
+          ramda: processors.ramdaProcessor(massiveDataSet),
+          math: processors.mathProcessor(),
+          immutable: processors.immutableProcessor(massiveDataSet),
+          validation: processors.validationProcessor(massiveDataSet).slice(0, 10)
+        };
+        break;
       case '/lodash':
+        operation = 'lodash-stress';
         result = processors.lodashProcessor(massiveDataSet);
         break;
+      case '/math':
+        operation = 'math-stress';
+        result = processors.mathProcessor();
+        break;
       case '/ramda':
+        operation = 'ramda-stress';
         result = processors.ramdaProcessor(massiveDataSet);
         break;
       case '/immutable':
+        operation = 'immutable-stress';
         result = processors.immutableProcessor(massiveDataSet);
         break;
-      case '/dates':
-        result = processors.dateProcessor('2024-01-01', '2024-12-31');
-        break;
       case '/validation':
-        result = processors.validationProcessor(massiveDataSet);
+        operation = 'validation-stress';
+        result = processors.validationProcessor(massiveDataSet).slice(0, 10);
         break;
       default:
         result = {
-          message: 'Heavy Build Performance Test Worker',
-          endpoints: ['/lodash', '/ramda', '/immutable', '/dates', '/validation'],
+          message: 'Cloudflare Workers vCPU Stress Test',
+          autoConfig: AUTO_CONFIG,
           dataSize: {
             users: massiveDataSet.users.length,
-            products: massiveDataSet.products.length,
-            totalMemory: 'very large'
+            products: massiveDataSet.products.length
           },
-          libraries: ['lodash', 'moment', 'ramda', 'rxjs', 'immutable', 'date-fns', 'uuid', 'validator']
+          endpoints: ['/stress', '/lodash', '/math', '/ramda', '/immutable', '/validation'],
+          instructions: 'Use /stress for full CPU load test'
         };
     }
 
+    const processingTime = performance.now() - start;
+
     return new Response(JSON.stringify({
-      data: Array.isArray(result) ? result.slice(0, 10) : result, // Limit response size
-      meta: {
-        processingTime: `${(performance.now() - start).toFixed(2)}ms`,
-        timestamp: moment().toISOString(),
-        worker: 'heavy-build-test'
+      operation,
+      processingTime: `${processingTime.toFixed(2)}ms`,
+      timestamp: moment().toISOString(),
+      result: operation === 'full-stress-test' ? 
+        { ...result, note: 'Results truncated for response size' } : 
+        result,
+      performance: {
+        fast: processingTime < 100,
+        acceptable: processingTime < 500,
+        slow: processingTime >= 500,
+        veryHeavy: processingTime >= 1000
       }
     }, null, 2), {
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 
+        'Content-Type': 'application/json',
+        'X-Processing-Time': `${processingTime.toFixed(2)}ms`,
+        'X-vCPU-Test': 'stress-test-active'
+      }
     });
   }
 };

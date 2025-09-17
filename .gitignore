@@ -1,3 +1,6 @@
 node_modules/
 dist/
 *.log
+vcpu-performance-report.json
+build-performance-results.json
+webpack.auto.js

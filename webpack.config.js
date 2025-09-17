@@ -34,7 +34,7 @@ module.exports = {
       new TerserPlugin({
         terserOptions: {
           compress: {
-            passes: 5, // Maximum compression passes - very CPU intensive
+            passes: 5,
             drop_console: true,
             drop_debugger: true,
             pure_funcs: ['console.log'],
@@ -58,7 +58,7 @@ module.exports = {
             comments: false,
           },
         },
-        parallel: 8, // Use maximum parallel processes
+        parallel: 8,
         extractComments: false
       }),
     ],
